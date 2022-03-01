@@ -26,7 +26,11 @@ final class AsdSimpleTodo {
      * Class constructor.
      */
     public function __construct() {
+        $this->define_constants();
+
         register_activation_hook( __FILE__, [ $this, 'activate' ] );
+
+        add_action( 'plugins_loaded', [ $this, 'init_plugin' ] );
     }
 
     /**
@@ -40,6 +44,31 @@ final class AsdSimpleTodo {
         }
 
         return $instance;
+    }
+
+    /**
+     * Define plugin constants.
+     *
+     * @since  1.0.0
+     *
+     * @return void
+     */
+    public function define_constants() {
+        define( 'ASD_SIMPLE_TODO_FILE', __FILE__ );
+        define( 'ASD_SIMPLE_TODO_PATH', __DIR__ );
+        define( 'ASD_SIMPLE_TODO_URL', plugins_url( '', ASD_SIMPLE_TODO_FILE ) );
+        define( 'ASD_SIMPLE_TODO_ASSETS', ASD_SIMPLE_TODO_URL . '/assets' );
+    }
+
+    /**
+     * Initialize the plugin.
+     *
+     * @return void
+     */
+    public function init_plugin() {
+        require_once( ASD_SIMPLE_TODO_PATH . '/includes/CRUD.php' );
+
+        new Asd\SimpleTodo\CRUD();
     }
 
     /**
