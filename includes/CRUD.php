@@ -9,22 +9,14 @@ use WP_Error;
  */
 class CRUD {
 
-    public function __construct() {
-        // add_action( 'admin_footer', [ $this, 'test' ] );
-    }
-
-    public function test() {
-        // $args = [
-        //     'id' => 3,
-        //     'todo_name' => 'Todo 3',
-        //     'todo_status' => 'in-progress',
-        // ];
-
-        $results = $this->get_todo_tasks();
-        error_log( print_r( $results, 1 ) );
-    }
-
-    public function create_todo_task( $args=[] ) {
+    /**
+     * Create todo task.
+     *
+     * @param array $args
+     *
+     * @return int|\WP_Error
+     */
+    public static function create_todo_task( $args=[] ) {
         global $wpdb;
 
         if ( empty( $args['todo_name'] ) ) {
@@ -54,7 +46,14 @@ class CRUD {
         return $wpdb->insert_id;
     }
 
-    public function update_todo_task( $args=[] ) {
+    /**
+     * Update todo task.
+     *
+     * @param array $args
+     *
+     * @return int|\WP_Error
+     */
+    public static function update_todo_task( $args=[] ) {
         global $wpdb;
 
         $todo_id = $args['id'];
@@ -98,15 +97,27 @@ class CRUD {
         return $updated;
     }
 
-    public function get_todo_tasks() {
+    /**
+     * Gets todo tasks.
+     *
+     * @return array|null
+     */
+    public static function get_todo_tasks() {
         global $wpdb;
 
-        $results = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}asd_simple_todo_lists", ARRAY_A );
+        $results = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}asd_simple_todo_lists" );
 
         return $results;
     }
 
-    public function get_todo_task( $id ) {
+    /**
+     * Gets single todo task by ID.
+     *
+     * @param int $id
+     *
+     * @return object|null
+     */
+    public static function get_todo_task( $id ) {
         global $wpdb;
 
         return $wpdb->get_row(
@@ -114,7 +125,14 @@ class CRUD {
         );
     }
 
-    public function delete_todo_task( $id ) {
+    /**
+     * Deletes todo task by ID.
+     *
+     * @param int $id
+     *
+     * @return int|boolean
+     */
+    public static function delete_todo_task( $id ) {
         global $wpdb;
 
         return $wpdb->delete(
