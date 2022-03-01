@@ -27,7 +27,6 @@ final class AsdSimpleTodo {
      */
     public function __construct() {
         register_activation_hook( __FILE__, [ $this, 'activate' ] );
-        register_deactivation_hook( __FILE__, [ $this, 'deactivate' ] );
     }
 
     /**
@@ -49,16 +48,31 @@ final class AsdSimpleTodo {
      * @return void
      */
     public function activate() {
-        
+        $this->create_db_tables();
     }
 
     /**
-     * Do staff upon plugin deactivation.
+     * Create DB tables.
      *
      * @return void
      */
-    public function deactivate() {
+    public function create_db_tables() {
+        global $wpdb;
 
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $schema_todo_lists = "CREATE TABLE `{$wpdb->prefix}asd_simple_todo_lists` (
+            `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+            `todo_name` varchar(255) NOT NULL,
+            `todo_status` text NOT NULL,
+            PRIMARY KEY (`id`)
+        ) $charset_collate;";
+
+        if ( ! function_exists( 'dbDelta' ) ) {
+            require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        }
+
+        dbDelta( $schema_todo_lists );
     }
 }
 
