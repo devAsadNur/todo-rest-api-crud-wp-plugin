@@ -66,6 +66,7 @@ final class AsdSimpleTodo {
      * @return void
      */
     public function init_plugin() {
+        require_once( ASD_SIMPLE_TODO_PATH . '/includes/CRUD.php' );
         require_once( ASD_SIMPLE_TODO_PATH . '/includes/API.php' );
 
         new Asd\SimpleTodo\API();
