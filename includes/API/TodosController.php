@@ -140,7 +140,7 @@ class TodosController extends WP_REST_Controller {
     protected function get_todo( $id ) {
         $todo = CRUD::get_todo_task( $id );
 
-        if ( ! $todo ) {
+        if ( empty( $todo ) ) {
             return new WP_Error(
                 'rest_todo_invalid_id',
                 __( 'Invalid todo ID.' ),
@@ -177,6 +177,10 @@ class TodosController extends WP_REST_Controller {
      */
     public function get_item( $request ) {
         $todo = $this->get_todo( $request['id'] );
+
+        if ( is_wp_error( $todo ) ) {
+            return $todo;
+        }
 
         $response = $this->prepare_item_for_response( $todo, $request );
         $response = rest_ensure_response( $response );
@@ -285,9 +289,6 @@ class TodosController extends WP_REST_Controller {
      * @return \WP_Error|WP_REST_Response
      */
     public function delete_item( $request ) {
-        $todo           = $this->get_todo( $request['id'] );
-        $item_to_delete = $this->prepare_item_for_response( $todo, $request );
-
         $deleted = CRUD::delete_todo_task( $request['id'] );
 
         if ( ! $deleted ) {
@@ -300,7 +301,6 @@ class TodosController extends WP_REST_Controller {
 
         $data = [
             'deleted'  => true,
-            'previous' => $item_to_delete->get_data(),
         ];
 
         $response = rest_ensure_response( $data );
@@ -360,7 +360,6 @@ class TodosController extends WP_REST_Controller {
         $response->add_links( $this->prepare_links( $item ) );
 
         return $response;
-
     }
 
     /**
